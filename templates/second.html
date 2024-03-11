@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar plate Image Classification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin: 20px auto;
+            max-width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Classification</h1>
+
+    <form id="imageForm">
+        <label for="file">Choose an image:</label>
+        <input type="file" name="file" id="file" accept="image/*" required>
+        <button type="button" onclick="uploadImage()">Classify Image</button>
+    </form>
+
+    <div id="result">
+        <!-- The result will be displayed here dynamically -->
+    </div>
+
+    <script>
+        function uploadImage() {
+            // Create a new FormData object
+            var formData = new FormData(document.getElementById('imageForm'));
+
+            // Create a new XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            // Configure it: POST-type request, target URL (replace with your server endpoint)
+            xhr.open('POST', '/classify_image', true);
+
+            // Define a callback function to handle the response
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    // Parse the JSON response
+                    var response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                    // Check if class_name is defined before using substring
+                    var class_name = response.class_name2 ? response.class_name2.substring(2) : 'N/A';
+
+                    // Display the result in the HTML page
+                    document.getElementById('result').innerHTML = '<p>Class: ' + class_name + '</p>' +
+                                                                    '<p>Confidence Score: ' + response.confidence_score2 + '</p>';
+                }
+            };
+
+            // Send the FormData object with the image to the server
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>

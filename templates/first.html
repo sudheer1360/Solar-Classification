@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #imageForm {
+            margin: 20px auto;
+            max-width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Debugging information styles */
+        #debug-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<a>
+    <h1>Solar Image Classification</h1>
+
+    <a href="/solar_panel"><button>Yes</button></a>
+    <a href="/no_solar_detected"><button>No</button></a>
+
+    <div id="result">
+        <!-- The result will be displayed here dynamically -->
+    </div>
+
+    <!-- Additional div for debugging information -->
+    <div id="debug-info"></div>
+
+   <!-- ... Your existing HTML code ... -->
+
+   <script>
+    function classifyImage() {
+        console.log("Classifying image...");
+    
+        var formData = new FormData();
+        var fileInput = document.getElementById('image');
+    
+        if (fileInput.files.length > 0) {
+            formData.append('file', fileInput.files[0]);
+    
+            fetch('/classify_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Received response:", data);
+    
+                // Log class_name and confidence_score
+                console.log("class_name1:", data.class_name1);
+                console.log("confidence_score1:", data.confidence_score1);
+                console.log(data.class_name1.substring(2),(data.class_name1.substring(2)).length);
+
+                if (data.class_name1.substring(2)=='yes\n'){
+                    location.href="/solar_panel";
+                } else {
+                    location.href="/no_solar_detected";
+                }
+    
+                // Update the result section
+                document.getElementById('result').innerHTML = '<p>Class: ' + data.class_name1.substring(2) + '</p>' +
+                                                                '<p>Confidence Score: ' + data.confidence_score1 + '</p>';
+    
+                // Additional debugging information
+                document.getElementById('debug-info').innerHTML = '<p>Debug Info:</p>' +
+                                                                 '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+    
+                // Additional debugging information
+                document.getElementById('debug-info').innerHTML = '<p>Debug Info:</p>' +
+                                                                 '<p>Error: ' + error.message + '</p>';
+            });
+        } else {
+            alert('Please select an image.');
+        }
+    }
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Classification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Solar Classification</h1>
+
+    <form id="investmentForm">
+        <label for="investment">Enter the Investment:</label>
+        <input type="number" name="investment" id="investment" min="0">
+        
+        <label for="cityInvestment">Select the City for Investment:</label>
+        <select name="cityInvestment" id="cityInvestment">
+            <option value="guntur">Guntur</option>
+            <option value="krishna">Krishna</option>
+            <option value="vijayawada">Vijayawada</option>
+            <option value="kurnool">Kurnool</option>
+            <option value="godavari">Godavari</option>
+        </select>
+
+        <button type="button" onclick="predictInvestment()">Predict based on Investment and City</button>
+    </form>
+
+    <form id="predictionForm">
+        <label for="panelPrediction">Select the Solar Panel:</label>
+        <select name="panelPrediction" id="panelPrediction">
+            <!-- Options will be dynamically added using JavaScript -->
+        </select>
+
+        <label for="cityPrediction">Select the City for Solar Panel Prediction:</label>
+        <select name="cityPrediction" id="cityPrediction">
+            <option value="guntur">Guntur</option>
+            <option value="krishna">Krishna</option>
+            <option value="vijayawada">Vijayawada</option>
+            <option value="kurnool">Kurnool</option>
+            <option value="godavari">Godavari</option>
+        </select>
+
+        <button type="button" onclick="predictPanel()">Predict based on Panel and City</button>
+    </form>
+
+    <div id="result">
+        <!-- The result will be displayed here dynamically -->
+    </div>
+
+    <script>
+        // Populate solar panel options
+        var panelDropdown = document.getElementById('panelPrediction');
+        var panelOptions = ['thin-film solar panel', 'hybrid solar panel', 'blue solar panel', 'monocrystalline solar panel', 'SMA - Sunny Boy 3300 TL', 'Fronius - IG 30', 'SMA - Sunny Boy 1700', 'Diehl AKO - Platinum 4800TL', 'CONERGY - WR 1700', 'Photowatt - PWI-6-30-I', 'SMA - Sunny Boy 2500', 'SMA - Sunny Boy 2100TL', 'AEG - Protect-PV 250', 'SMA - Sunny Boy 3000TL', 'Sputnik - SOLARMAX 3000S', 'SMA - Sunny Mini Central 8', 'Schuco - SGI-3000', 'Danfoss - UNILYNX 3600', 'Mastervolt - SunMaster XS3200', 'Tenesol - Connectis EI 3300', 'CONERGY - IPG3000', 'Fronius - IG 20', 'Sputnik - SOLARMAX SM3000S', 'Photowatt - PWI-6-40-I', 'SMA - Sunny Boy 3300', 'SMA - Sunny Boy 3000'];
+        
+        panelOptions.forEach(function (option) {
+            var opt = document.createElement('option');
+            opt.value = option;
+            opt.innerHTML = option;
+            panelDropdown.appendChild(opt);
+        });
+
+        function predictInvestment() {
+            var investment = document.getElementById('investment').value;
+            var cityInvestment = document.getElementById('cityInvestment').value;
+
+            // Send the data to the server and handle the response
+            fetch('/predict_solar_investment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    investment: investment,
+                    city: cityInvestment,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Display the result in the HTML page
+                document.getElementById('result').innerHTML = '<p>Payback Period: ' + data.payback_period + '</p>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = '<p>Error occurred while predicting investment.</p>';
+            });
+        }
+
+        function predictPanel() {
+            var panelPrediction = document.getElementById('panelPrediction').value;
+            var cityPrediction = document.getElementById('cityPrediction').value;
+
+            // Send the data to the server and handle the response
+            fetch('/predict_solar_panel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    panel: panelPrediction,
+                    city: cityPrediction,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result in the HTML page
+                document.getElementById('result').innerHTML = '<p>Surface Area: ' + data.surface_area + '</p>' +
+                                                               '<p>Tilt: ' + data.tilt + '</p>' +
+                                                               '<p>Power: ' + data.power + '</p>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = '<p>Error occurred while predicting panel.</p>';
+            });
+        }
+    </script>
+</body>
+</html>

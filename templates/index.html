@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Classification</title>
+</head>
+<body>
+    <h1>Solar Classification</h1>
+    <form action="/predict" method="post">
+        <label for="investment">Enter the Investment:</label>
+        <input type="number" id="investment" name="investment" min="0" required><br><br>
+
+        <label for="investment_city">Select the City for Investment:</label>
+        <select id="investment_city" name="investment_city">
+            {% for key, value in city_mapping.items() %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="panel">Select the Panel name:</label>
+        <select id="panel" name="panel">
+            {% for key, value in panel_mapping.items() %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="panel_city">Select the City:</label>
+        <select id="panel_city" name="panel_city">
+            {% for key, value in city_mapping.items() %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <input type="submit" name="predict_investment" value="Predict based on Investment and City">
+        <input type="submit" name="predict_panel" value="Predict based on Panel and City">
+    </form>
+</body>
+</html>
